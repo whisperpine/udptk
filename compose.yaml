@@ -2,6 +2,7 @@
 
 services:
   udptk:
+    init: true
     build:
       context: .
       target: final
@@ -11,3 +12,13 @@ services:
     ports:
       - 6777:6777/udp
     command: [ "listen", "-p", "6777"]
+  send:
+    build:
+      context: .
+      target: final
+      dockerfile: Dockerfile.dev
+    environment:
+      RUST_LOG: udptk=debug
+    ports:
+      - 6777:6777/udp
+    command: send -d udptk -p 6777 yahaha

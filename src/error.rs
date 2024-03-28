@@ -3,7 +3,13 @@ use tracing::error;
 #[derive(Debug, thiserror::Error)]
 pub enum UdptkError {
     #[error(transparent)]
-    ParseIntError(#[from] std::num::ParseIntError),
+    IoError(#[from] std::io::Error),
+    #[error(transparent)]
+    ResolverError(#[from] trust_dns_resolver::error::ResolveError),
+    #[error("cannot find ip address for domain: {0}")]
+    NoIpAddress(String),
+    #[error("cannot find free udp socket to bind")]
+    NoFreeSocket,
     #[error("unknown error")]
     Unknown,
 }

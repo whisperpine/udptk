@@ -1,12 +1,16 @@
 mod cli;
 
-fn main() {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     use clap::Parser;
 
     init_tracing_subscriber();
-    cli::Args::parse().run().unwrap_or_else(|error| {
+    let args = cli::Args::parse();
+    args.run().await.unwrap_or_else(|error| {
         tracing::error!("{}", error);
     });
+
+    Ok(())
 }
 
 fn init_tracing_subscriber() {

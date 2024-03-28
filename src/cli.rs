@@ -7,11 +7,11 @@ use clap::{Parser, Subcommand};
 #[command(version, about, long_about = None)]
 pub struct Args {
     #[command(subcommand)]
-    pub subcommands: Option<SubCommands>,
+    subcommands: Option<SubCommands>,
 }
 
 #[derive(Subcommand)]
-pub enum SubCommands {
+enum SubCommands {
     /// Send
     Send(SendArgs),
     /// Listen
@@ -23,17 +23,21 @@ pub enum SubCommands {
 }
 
 #[derive(clap::Args)]
-pub struct SendArgs {
+struct SendArgs {
     /// Anything you want to send
-    pub content: String,
+    content: String,
+    #[arg(short, long)]
+    port: u16,
+    #[arg(short, long)]
+    domain: Option<String>,
 }
 
 impl Args {
-    pub fn run(self) -> anyhow::Result<()> {
+    pub async fn run(self) -> anyhow::Result<()> {
         if let Some(sub_cmd) = self.subcommands {
             match sub_cmd {
-                SubCommands::Send(send_args) => udptk::send(send_args.content)?,
-                SubCommands::Listen { port } => udptk::listen(port)?,
+                SubCommands::Send(a) => udptk::send(a.domain, a.port, a.content).await?,
+                SubCommands::Listen { port } => udptk::listen(port).await?,
             }
         }
         Ok(())
