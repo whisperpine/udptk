@@ -1,0 +1,13 @@
+# Use this file for local test.
+
+services:
+  udptk:
+    build:
+      context: .
+      target: final
+      dockerfile: Dockerfile.dev
+    environment:
+      RUST_LOG: udptk=debug
+    ports:
+      - 6777:6777/udp
+    command: [ "listen", "-p", "6777"]
