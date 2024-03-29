@@ -54,6 +54,13 @@ FROM busybox:musl AS final
 ARG APP_NAME
 WORKDIR /app
 
+ARG TARGETPLATFORM
+# Copy the executable from the "build" stage.
+COPY --link --from=build /app/${TARGETPLATFORM}/${APP_NAME} .
+
+# Create a symlink so that udptk can be found in $PATH.
+RUN ln -s /app/udptk /bin/udptk
+
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
 ARG UID=10001
@@ -66,13 +73,6 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 USER appuser
-
-ARG TARGETPLATFORM
-# Copy the executable from the "build" stage.
-COPY --link --from=build /app/${TARGETPLATFORM}/${APP_NAME} .
-
-# Create a symlink so that udptk can be found in $PATH.
-RUN ln -s /app/udptk /bin/udptk
 
 # What the container should run when it is started.
 ENTRYPOINT ["/app/udptk"]
