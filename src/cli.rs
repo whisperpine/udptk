@@ -15,11 +15,11 @@ pub struct Args {
 
 #[derive(Subcommand)]
 enum SubCommands {
-    /// Send
+    /// Send UDP packets
     Send(SendArgs),
-    /// Listen
+    /// Listen to a UDP port
     Listen {
-        /// port
+        /// Port to bind with
         #[arg(short, long)]
         port: u16,
     },

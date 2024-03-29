@@ -1,13 +1,25 @@
 use crate::UdptkError;
-use tracing::info;
+use std::future::Future;
 
-pub async fn listen_core(port: u16) -> Result<(), UdptkError> {
+/// Listen to the given port.
+///
+/// Can be cancelled by `Ctrl+C`.
+pub async fn listen(port: u16) -> Result<(), UdptkError> {
+    let (ctrl_c, terminate) = graceful_shutdown();
+    tokio::select! {
+        _ = ctrl_c => Ok(()),
+        _ = terminate => Ok(()),
+        output = listen_core(port) => output,
+    }
+}
+
+/// Listen to the given port.
+async fn listen_core(port: u16) -> Result<(), UdptkError> {
     use tokio::net::UdpSocket;
-
+    use tracing::info;
     info!("app version: {}", crate::PKG_VERSION);
-    info!("listening at port {}", port);
-
     let sock = UdpSocket::bind(("0.0.0.0", port)).await?;
+    info!("listening at port {}", port);
     let mut buf = [0; 1024];
     loop {
         let (len, addr) = sock.recv_from(&mut buf).await?;
@@ -17,14 +29,13 @@ pub async fn listen_core(port: u16) -> Result<(), UdptkError> {
     }
 }
 
-pub async fn listen(port: u16) -> Result<(), UdptkError> {
+fn graceful_shutdown() -> (impl Future<Output = ()>, impl Future<Output = ()>) {
     use tokio::signal;
     let ctrl_c = async {
         signal::ctrl_c()
             .await
             .expect("failed to install Ctrl+C handler");
     };
-
     #[cfg(unix)]
     let terminate = async {
         signal::unix::signal(signal::unix::SignalKind::terminate())
@@ -32,13 +43,7 @@ pub async fn listen(port: u16) -> Result<(), UdptkError> {
             .recv()
             .await;
     };
-
     #[cfg(not(unix))]
     let terminate = std::future::pending::<()>();
-
-    tokio::select! {
-        _ = ctrl_c => Ok(()),
-        _ = terminate => Ok(()),
-        output = listen_core(port) => output,
-    }
+    (ctrl_c, terminate)
 }

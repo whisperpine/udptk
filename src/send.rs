@@ -1,10 +1,11 @@
 use crate::UdptkError;
 use std::net::IpAddr;
 
+/// Send content as UDP packets to given endpoint.
 pub async fn send(target: String, content: String) -> Result<(), UdptkError> {
     use tokio::net::UdpSocket;
 
-    let (ip_addr, port) = get_ip_addr(&target)?;
+    let (ip_addr, port) = get_ip_port(&target)?;
     tracing::debug!("target ip address: {}", ip_addr);
 
     let sock = UdpSocket::bind(("0.0.0.0", get_free_port()?)).await?;
@@ -14,6 +15,7 @@ pub async fn send(target: String, content: String) -> Result<(), UdptkError> {
     Ok(())
 }
 
+/// Randomly get a free port.
 fn get_free_port() -> Result<u16, UdptkError> {
     use rand::Rng;
     use std::net::UdpSocket;
@@ -30,12 +32,13 @@ fn get_free_port() -> Result<u16, UdptkError> {
     Err(UdptkError::NoFreeSocket)
 }
 
-fn get_ip_addr(domain: &str) -> Result<(IpAddr, u16), UdptkError> {
+/// Get IP and port from input string.
+fn get_ip_port(target: &str) -> Result<(IpAddr, u16), UdptkError> {
     use std::net::ToSocketAddrs;
 
-    let mut addrs_iter = domain.to_socket_addrs()?;
+    let mut addrs_iter = target.to_socket_addrs()?;
     match addrs_iter.find(|addr| addr.is_ipv4()) {
         Some(addr) => Ok((addr.ip(), addr.port())),
-        None => Err(UdptkError::NoIpAddress(domain.to_string())),
+        None => Err(UdptkError::NoIpAddress(target.to_string())),
     }
 }
