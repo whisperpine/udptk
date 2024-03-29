@@ -29,7 +29,7 @@ enum SubCommands {
 struct SendArgs {
     /// Anything you want to send
     content: String,
-    /// Supported formats: "domain:port", "ip:port"
+    /// "domain:port" or "ip:port"
     #[arg(short, long)]
     #[arg(default_value_t = format!("localhost:6777"))]
     target: String,
