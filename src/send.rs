@@ -1,20 +1,13 @@
-use std::net::{IpAddr, Ipv4Addr};
-
 use crate::UdptkError;
+use std::net::IpAddr;
 
-pub async fn send(domain: Option<String>, port: u16, content: String) -> Result<(), UdptkError> {
+pub async fn send(target: String, content: String) -> Result<(), UdptkError> {
     use tokio::net::UdpSocket;
 
-    let bind_port = get_free_port()?;
-    tracing::debug!(%bind_port);
+    let (ip_addr, port) = get_ip_addr(&target)?;
+    tracing::debug!("target ip address: {}", ip_addr);
 
-    let ip_addr = match domain {
-        Some(value) => get_ip(&value).await?,
-        None => IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
-    };
-    tracing::debug!(%ip_addr);
-
-    let sock = UdpSocket::bind(("0.0.0.0", bind_port)).await?;
+    let sock = UdpSocket::bind(("0.0.0.0", get_free_port()?)).await?;
     sock.send_to(content.as_bytes(), (ip_addr, port)).await?;
     tracing::info!(r#"target: "{ip_addr}:{port}", content: "{}""#, content);
 
@@ -30,31 +23,19 @@ fn get_free_port() -> Result<u16, UdptkError> {
     for _ in 0..MAX_TRY_TIMES {
         let port: u16 = rng.gen_range(5000..9000);
         if UdpSocket::bind(("0.0.0.0", port)).is_ok() {
+            tracing::trace!("port to bind with: {}", port);
             return Ok(port);
         }
     }
     Err(UdptkError::NoFreeSocket)
 }
 
-async fn get_ip(domain: &str) -> Result<IpAddr, UdptkError> {
-    use trust_dns_resolver::config::*;
-    use trust_dns_resolver::name_server::TokioConnectionProvider;
-    use trust_dns_resolver::AsyncResolver;
+fn get_ip_addr(domain: &str) -> Result<(IpAddr, u16), UdptkError> {
+    use std::net::ToSocketAddrs;
 
-    // Construct a new Resolver with default configuration options
-    let mut resolver = AsyncResolver::new(
-        ResolverConfig::default(),
-        ResolverOpts::default(),
-        TokioConnectionProvider::default(),
-    );
-
-    // Lookup the IP addresses associated with a name.
-    let mut response = resolver.lookup_ip(domain).await?;
-
-    // There can be many addresses associated with the name,
-    //  this can return IPv4 and/or IPv6 addresses
-    match response.iter().next() {
-        Some(addr) => Ok(addr),
+    let mut addrs_iter = domain.to_socket_addrs()?;
+    match addrs_iter.find(|addr| addr.is_ipv4()) {
+        Some(addr) => Ok((addr.ip(), addr.port())),
         None => Err(UdptkError::NoIpAddress(domain.to_string())),
     }
 }

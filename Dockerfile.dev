@@ -1,9 +1,11 @@
 # This file is intended to be used in conjunction with `docker compose watch`.
+# For the multistage, renew the ARG by simply stating: ARG XXX
+ARG APP_NAME=udptk
 
 ################################################################################
 # Create a stage for building the application.
 FROM rust:alpine AS build
-ARG APP_NAME=udptk
+ARG APP_NAME
 WORKDIR /app
 
 # Install host build dependencies.
@@ -31,10 +33,14 @@ RUN --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
 # from the build stage where the necessary files are copied from the build stage.
 
 FROM busybox:musl AS final
+ARG APP_NAME
 WORKDIR /app
 
 # Copy the executable from the "build" stage.
 COPY --link --from=build /app/${APP_NAME} /app/
+
+# Create a symlink so that udptk can be found in $PATH.
+RUN ln -s /app/udptk /bin/udptk
 
 # What the container should run when it is started.
 ENTRYPOINT ["/app/udptk"]
