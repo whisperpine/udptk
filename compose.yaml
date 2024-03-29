@@ -7,27 +7,19 @@ services:
       context: .
       target: final
       dockerfile: Dockerfile.dev
-    environment:
-      RUST_LOG: udptk=debug
+    # environment:
+    #   RUST_LOG: udptk=debug
     ports:
       - 6777:6777/udp
-    command: [ "listen", "-p", "6777"]
+    command: listen -p 6777
 
   send:
     build:
       context: .
       target: final
       dockerfile: Dockerfile.dev
-    environment:
-      RUST_LOG: udptk=debug
+    # environment:
+    #   RUST_LOG: udptk=debug
     command: send -t listen:6777 yahaha
     depends_on:
       - listen
-
-  # quilkin:
-  #   image: us-docker.pkg.dev/quilkin/release/quilkin:0.8.0
-  #   ports:
-  #     - 7777:7777/udp
-  #   command: proxy --to 127.0.0.1:6777
-  #   environment:
-  #     RUST_LOG: debug

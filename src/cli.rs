@@ -6,9 +6,11 @@ use clap::{Parser, Subcommand};
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 pub struct Args {
+    /// Turn debug information on
+    #[arg(short, action = clap::ArgAction::Count)]
+    debug: u8,
     #[command(subcommand)]
     subcommands: SubCommands,
-    // subcommands: Option<SubCommands>,
 }
 
 #[derive(Subcommand)]
@@ -34,6 +36,15 @@ struct SendArgs {
 }
 
 impl Args {
+    pub fn get_log_level(&self) -> anyhow::Result<&'static str> {
+        match self.debug {
+            0 => Ok("info"),
+            1 => Ok("debug"),
+            2 => Ok("trace"),
+            _ => anyhow::bail!(r#"debug flat "-d" can only be set up to 2 times (e.g. "-dd")"#),
+        }
+    }
+
     pub async fn run(self) -> anyhow::Result<()> {
         match self.subcommands {
             SubCommands::Send(a) => udptk::send(a.target, a.content).await?,
