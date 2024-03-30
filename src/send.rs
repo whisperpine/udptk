@@ -2,10 +2,10 @@ use crate::UdptkError;
 use std::net::IpAddr;
 
 /// Send content as UDP packets to given endpoint.
-pub async fn send(target: String, content: String) -> Result<(), UdptkError> {
+pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
     use tokio::net::UdpSocket;
 
-    let (ip_addr, port) = get_ip_port(&target)?;
+    let (ip_addr, port) = get_ip_port(target)?;
     tracing::debug!("target ip address: {}", ip_addr);
 
     let sock = UdpSocket::bind(("0.0.0.0", get_free_port()?)).await?;

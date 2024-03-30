@@ -36,6 +36,7 @@ struct SendArgs {
 }
 
 impl Args {
+    /// Get log level from `-d` flag repeat times.
     pub fn get_log_level(&self) -> anyhow::Result<&'static str> {
         match self.debug {
             0 => Ok("info"),
@@ -45,10 +46,11 @@ impl Args {
         }
     }
 
-    pub async fn run(self) -> anyhow::Result<()> {
-        match self.subcommands {
-            SubCommands::Send(a) => udptk::send(a.target, a.content).await?,
-            SubCommands::Listen { port } => udptk::listen(port).await?,
+    /// Run sub commands.
+    pub async fn run_sub_cmd(&self) -> anyhow::Result<()> {
+        match &self.subcommands {
+            SubCommands::Send(a) => udptk::send(&a.target, &a.content).await?,
+            SubCommands::Listen { port } => udptk::listen(*port).await?,
         }
         Ok(())
     }

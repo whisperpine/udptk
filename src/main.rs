@@ -7,7 +7,7 @@ async fn main() -> anyhow::Result<()> {
     let args = cli::Args::parse();
     let log_level = args.get_log_level()?;
     init_tracing_subscriber(log_level);
-    args.run().await.unwrap_or_else(|error| {
+    args.run_sub_cmd().await.unwrap_or_else(|error| {
         tracing::error!("{}", error);
     });
 
