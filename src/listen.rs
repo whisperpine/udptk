@@ -24,7 +24,7 @@ async fn listen_core(port: u16) -> Result<(), UdptkError> {
     loop {
         let (len, addr) = sock.recv_from(&mut buf).await?;
         tracing::debug!("{:?} bytes received from {:?}", len, addr);
-        let content = String::from_utf8_lossy(&buf[..len]);
+        let content = std::str::from_utf8(&buf[..len])?;
         info!(%content);
     }
 }
