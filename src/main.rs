@@ -1,10 +1,8 @@
-mod cli;
-
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     use clap::Parser;
 
-    let args = cli::Args::parse();
+    let args = udptk::cli::Args::parse();
     let log_level = args.get_log_level()?;
     init_tracing_subscriber(log_level);
     args.run_sub_cmd().await.unwrap_or_else(|error| {

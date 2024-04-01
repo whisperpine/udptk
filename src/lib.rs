@@ -1,6 +1,7 @@
 #![cfg_attr(debug_assertions, allow(unused))]
 #![cfg_attr(not(debug_assertions), deny(clippy::unwrap_used))]
 
+pub mod cli;
 pub mod error;
 pub mod listen;
 pub mod send;
