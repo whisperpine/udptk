@@ -1,19 +1,23 @@
 use crate::UdptkError;
 use std::future::Future;
 
-/// Listen to the given port.
-///
-/// Can be cancelled by `Ctrl+C`.
+// Listens on a UDP port until Ctrl+C or terminate signal (on unix platforms) is received.
+// The returned future resolves when either event is triggered or an error occurs.
+// The error is logged but not returned, as the program will shut down anyway.
 pub async fn listen(port: u16) -> Result<(), UdptkError> {
     let (ctrl_c, terminate) = graceful_shutdown();
     tokio::select! {
+        // Wait for Ctrl+C signal
         _ = ctrl_c => Ok(()),
+        // Wait for terminate signal (on unix platforms)
         _ = terminate => Ok(()),
+        // Wait for errors in the listener
         output = listen_core(port) => output,
     }
 }
 
-/// Listen to the given port.
+// Core UDP listener that runs until an error occurs.
+// Logs the app version, listens on the given port and logs any received messages.
 async fn listen_core(port: u16) -> Result<(), UdptkError> {
     use tokio::net::UdpSocket;
     use tracing::info;
@@ -29,6 +33,13 @@ async fn listen_core(port: u16) -> Result<(), UdptkError> {
     }
 }
 
+/// Waits for a Ctrl+C signal or a terminate signal on unix platforms.
+///
+/// Returns two futures that can be used to wait for either event.
+///
+/// The Ctrl+C future is resolved when a Ctrl+C signal is received.\
+/// The terminate future is resolved when a terminate signal is received on unix platforms.\
+/// On non-unix platforms the terminate future is a no-op future that never resolves.
 fn graceful_shutdown() -> (impl Future<Output = ()>, impl Future<Output = ()>) {
     use tokio::signal;
     let ctrl_c = async {

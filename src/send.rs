@@ -1,7 +1,14 @@
 use crate::UdptkError;
 use std::net::IpAddr;
 
-/// Send content as UDP packets to given endpoint.
+/// Send UDP packet to a target.
+///
+/// This function will first resolve the target to an IP address and a port number,\
+/// then bind a UDP socket to a free local port and send the packet to the target.
+///
+/// The target can be either in the form of "192.168.1.1:80" or "example.com:443".
+///
+/// The content of the packet is the given string in the `content` parameter.
 pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
     use tokio::net::UdpSocket;
 
@@ -15,7 +22,10 @@ pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
     Ok(())
 }
 
-/// Randomly get a free port.
+/// Get a free UDP port number to bind with.
+///
+/// This function will try to bind a UDP socket to a random port number between
+/// 5000 and 9000. If no free port is found after trying 50 times, an error will be returned.
 fn get_free_port() -> Result<u16, UdptkError> {
     use rand::Rng;
     use std::net::UdpSocket;
@@ -32,7 +42,11 @@ fn get_free_port() -> Result<u16, UdptkError> {
     Err(UdptkError::NoFreeSocket)
 }
 
-/// Get IP and port from input string.
+/// Resolve the given target to IP address and port number.
+///
+/// The target can be either in the form of "192.168.1.1:80" or "example.com:443".\
+/// The function will try to resolve the target to an IP address and a port number,
+/// and return the result as a tuple `(IpAddr, u16)`.
 fn get_ip_port(target: &str) -> Result<(IpAddr, u16), UdptkError> {
     use std::net::ToSocketAddrs;
 
