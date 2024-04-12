@@ -16,8 +16,18 @@ pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
     tracing::debug!("target ip address: {}", ip_addr);
 
     let sock = UdpSocket::bind(("0.0.0.0", get_free_port()?)).await?;
-    sock.send_to(content.as_bytes(), (ip_addr, port)).await?;
     tracing::info!(r#"target: "{ip_addr}:{port}", content: "{}""#, content);
+
+    let sent_bytes = sock.send_to(content.as_bytes(), (ip_addr, port)).await?;
+    if sent_bytes == content.as_bytes().len() {
+        tracing::debug!("packet sent successfully");
+    } else {
+        tracing::warn!(
+            "only {} bytes of {} were sent",
+            sent_bytes,
+            content.as_bytes().len()
+        );
+    }
 
     Ok(())
 }
