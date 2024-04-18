@@ -13,10 +13,10 @@ pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
     use tokio::net::UdpSocket;
 
     let (ip_addr, port) = get_ip_port(target)?;
-    tracing::debug!("target ip address: {}", ip_addr);
-
-    let sock = UdpSocket::bind(("0.0.0.0", get_free_port()?)).await?;
     tracing::info!(r#"target: "{ip_addr}:{port}", content: "{}""#, content);
+
+    let sock = UdpSocket::bind("0.0.0.0:0").await?;
+    tracing::trace!("udp socket bound to: {}", sock.local_addr()?);
 
     let sent_bytes = sock.send_to(content.as_bytes(), (ip_addr, port)).await?;
     if sent_bytes == content.as_bytes().len() {
@@ -30,26 +30,6 @@ pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
     }
 
     Ok(())
-}
-
-/// Get a free UDP port number to bind with.
-///
-/// This function will try to bind a UDP socket to a random port number between
-/// 5000 and 9000. If no free port is found after trying 50 times, an error will be returned.
-fn get_free_port() -> Result<u16, UdptkError> {
-    use rand::Rng;
-    use std::net::UdpSocket;
-
-    const MAX_TRY_TIMES: u32 = 50;
-    let mut rng = rand::thread_rng();
-    for _ in 0..MAX_TRY_TIMES {
-        let port: u16 = rng.gen_range(5000..9000);
-        if UdpSocket::bind(("0.0.0.0", port)).is_ok() {
-            tracing::trace!("port to bind with: {}", port);
-            return Ok(port);
-        }
-    }
-    Err(UdptkError::NoFreeSocket)
 }
 
 /// Resolve the given target to IP address and port number.
