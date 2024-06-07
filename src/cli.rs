@@ -10,8 +10,8 @@ pub struct Args {
     ///
     /// This flag can be set multiple times to increase verbosity.
     #[arg(short, action = clap::ArgAction::Count,
-         help = "Increase logging verbosity. \n\
-         This flag can be set multiple times to increase verbosity.")]
+        help = "Increase logging verbosity. \n\
+        This flag can be set multiple times to increase verbosity.")]
     debug: u8,
     /// The subcommand to run.
     #[command(subcommand)]
