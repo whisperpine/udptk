@@ -1,0 +1,21 @@
+[package]
+name = "udptk"
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+readme.workspace = true
+version.workspace = true
+license.workspace = true
+description = "A UDP toolkit for debugging purpose"
+
+[[bin]]
+name = "udptk"
+path = "./src/main.rs"
+
+[dependencies]
+udptk-core = { path = "../core", version = "*" }
+tracing-subscriber.workspace = true
+tracing.workspace = true
+anyhow.workspace = true
+tokio.workspace = true
+clap.workspace = true

@@ -1,9 +1,11 @@
+mod cli;
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     use clap::Parser;
 
     // Parse command line arguments
-    let args = udptk::cli::Args::parse();
+    let args = crate::cli::Args::parse();
 
     // Initialize tracing subscriber with log level from args
     let log_level = args.get_log_level()?;
@@ -35,7 +37,7 @@ fn init_tracing_subscriber(log_level: &str) {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| format!("{}={}", udptk::CRATE_NAME, log_level).into()),
+                .unwrap_or_else(|_| log_level.into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();

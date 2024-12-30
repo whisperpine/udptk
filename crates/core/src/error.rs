@@ -1,4 +1,4 @@
-use tracing::error;
+pub type Result<T> = core::result::Result<T, UdptkError>;
 
 /// Enumeration of errors that can occur in this crate.
 #[derive(Debug, thiserror::Error)]

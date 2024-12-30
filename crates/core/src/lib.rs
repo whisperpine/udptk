@@ -7,7 +7,6 @@
 #![cfg_attr(debug_assertions, allow(unused))]
 #![cfg_attr(not(debug_assertions), deny(clippy::unwrap_used))]
 
-pub mod cli;
 pub mod error;
 pub mod listen;
 pub mod send;
@@ -17,7 +16,4 @@ pub use listen::listen;
 pub use send::send;
 
 /// The version of this crate as a string.
-pub const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
-
-/// The name of this crate as a string.
-pub const CRATE_NAME: &str = env!("CARGO_CRATE_NAME");
+const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");

@@ -67,8 +67,8 @@ impl Args {
     /// Run the subcommand specified in the command line arguments.
     pub async fn run_sub_cmd(&self) -> anyhow::Result<()> {
         match &self.subcommands {
-            SubCommands::Send(a) => crate::send(&a.target, &a.content).await?,
-            SubCommands::Listen { port } => crate::listen(*port).await?,
+            SubCommands::Send(a) => udptk::send(&a.target, &a.content).await?,
+            SubCommands::Listen { port } => udptk::listen(*port).await?,
         }
         Ok(())
     }
