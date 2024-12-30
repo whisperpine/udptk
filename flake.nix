@@ -56,7 +56,13 @@
       devShells = forEachSupportedSystem (
         { pkgs }:
         {
-          default = pkgs.mkShell { packages = with pkgs; [ rustToolchain ]; };
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              rustToolchain
+              cargo-edit
+              just
+            ];
+          };
         }
       );
     };
