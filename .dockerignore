@@ -31,3 +31,6 @@
 /Cargo.lock
 LICENSE
 README.md
+
+.direnv
+.envrc
