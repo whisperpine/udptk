@@ -3,7 +3,7 @@ use std::net::IpAddr;
 
 /// Send UDP packet to a target.
 ///
-/// This function will first resolve the target to an IP address and a port number,\
+/// This function will first resolve the target to an IP address and a port number,
 /// then bind a UDP socket to a free local port and send the packet to the target.
 ///
 /// The target can be either in the form of "192.168.1.1:80" or "example.com:443".
@@ -19,14 +19,10 @@ pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
     tracing::trace!("udp socket bound to: {}", sock.local_addr()?);
 
     let sent_bytes = sock.send_to(content.as_bytes(), (ip_addr, port)).await?;
-    if sent_bytes == content.as_bytes().len() {
+    if sent_bytes == content.len() {
         tracing::debug!("packet sent successfully");
     } else {
-        tracing::warn!(
-            "only {} bytes of {} were sent",
-            sent_bytes,
-            content.as_bytes().len()
-        );
+        tracing::warn!("only {} bytes of {} were sent", sent_bytes, content.len());
     }
 
     Ok(())
@@ -34,7 +30,7 @@ pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
 
 /// Resolve the given target to IP address and port number.
 ///
-/// The target can be either in the form of "192.168.1.1:80" or "example.com:443".\
+/// The target can be either in the form of "192.168.1.1:80" or "example.com:443".
 /// The function will try to resolve the target to an IP address and a port number,
 /// and return the result as a tuple `(IpAddr, u16)`.
 fn get_ip_port(target: &str) -> Result<(IpAddr, u16), UdptkError> {

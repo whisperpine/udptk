@@ -37,8 +37,8 @@ async fn listen_core(port: u16) -> Result<(), UdptkError> {
 ///
 /// Returns two futures that can be used to wait for either event.
 ///
-/// The Ctrl+C future is resolved when a Ctrl+C signal is received.\
-/// The terminate future is resolved when a terminate signal is received on unix platforms.\
+/// The Ctrl+C future is resolved when a Ctrl+C signal is received.
+/// The terminate future is resolved when a terminate signal is received on unix platforms.
 /// On non-unix platforms the terminate future is a no-op future that never resolves.
 fn graceful_shutdown() -> (impl Future<Output = ()>, impl Future<Output = ()>) {
     use tokio::signal;
