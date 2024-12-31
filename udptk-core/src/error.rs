@@ -1,8 +1,8 @@
-pub type Result<T> = core::result::Result<T, UdptkError>;
+pub type Result<T> = core::result::Result<T, Error>;
 
 /// Enumeration of errors that can occur in this crate.
 #[derive(Debug, thiserror::Error)]
-pub enum UdptkError {
+pub enum Error {
     /// Error happened during io operation.
     #[error("io error: {0}")]
     IoError(#[from] std::io::Error),

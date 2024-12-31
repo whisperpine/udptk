@@ -1,4 +1,3 @@
-use crate::UdptkError;
 use std::net::IpAddr;
 
 /// Send UDP packet to a target.
@@ -9,7 +8,7 @@ use std::net::IpAddr;
 /// The target can be either in the form of "192.168.1.1:80" or "example.com:443".
 ///
 /// The content of the packet is the given string in the `content` parameter.
-pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
+pub async fn send(target: &str, content: &str) -> crate::Result<()> {
     use tokio::net::UdpSocket;
 
     let (ip_addr, port) = get_ip_port(target)?;
@@ -33,12 +32,12 @@ pub async fn send(target: &str, content: &str) -> Result<(), UdptkError> {
 /// The target can be either in the form of "192.168.1.1:80" or "example.com:443".
 /// The function will try to resolve the target to an IP address and a port number,
 /// and return the result as a tuple `(IpAddr, u16)`.
-fn get_ip_port(target: &str) -> Result<(IpAddr, u16), UdptkError> {
+fn get_ip_port(target: &str) -> crate::Result<(IpAddr, u16)> {
     use std::net::ToSocketAddrs;
 
     let mut addrs_iter = target.to_socket_addrs()?;
     match addrs_iter.find(|addr| addr.is_ipv4()) {
         Some(addr) => Ok((addr.ip(), addr.port())),
-        None => Err(UdptkError::NoIpAddress(target.to_string())),
+        None => Err(crate::Error::NoIpAddress(target.to_string())),
     }
 }

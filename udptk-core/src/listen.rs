@@ -1,10 +1,9 @@
-use crate::UdptkError;
 use std::future::Future;
 
 // Listens on a UDP port until Ctrl+C or terminate signal (on unix platforms) is received.
 // The returned future resolves when either event is triggered or an error occurs.
 // The error is logged but not returned, as the program will shut down anyway.
-pub async fn listen(port: u16) -> Result<(), UdptkError> {
+pub async fn listen(port: u16) -> crate::Result<()> {
     let (ctrl_c, terminate) = graceful_shutdown();
     tokio::select! {
         // Wait for Ctrl+C signal
@@ -18,10 +17,11 @@ pub async fn listen(port: u16) -> Result<(), UdptkError> {
 
 // Core UDP listener that runs until an error occurs.
 // Logs the app version, listens on the given port and logs any received messages.
-async fn listen_core(port: u16) -> Result<(), UdptkError> {
+async fn listen_core(port: u16) -> crate::Result<()> {
     use tokio::net::UdpSocket;
     use tracing::info;
-    info!("app version: {}", crate::PKG_VERSION);
+
+    info!("app version: {}", env!("CARGO_PKG_VERSION"));
     let sock = UdpSocket::bind(("0.0.0.0", port)).await?;
     info!("listening at port {}", port);
     let mut buf = [0; 1024];

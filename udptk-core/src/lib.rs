@@ -11,9 +11,6 @@ pub mod error;
 pub mod listen;
 pub mod send;
 
-pub use error::UdptkError;
+pub use error::{Error, Result};
 pub use listen::listen;
 pub use send::send;
-
-/// The version of this crate as a string.
-const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");

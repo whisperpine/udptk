@@ -563,7 +563,7 @@ dependencies = [
 
 [[package]]
 name = "udptk"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -575,7 +575,7 @@ dependencies = [
 
 [[package]]
 name = "udptk-core"
-version = "0.1.5"
+version = "0.2.0"
 dependencies = [
  "thiserror",
  "tokio",
