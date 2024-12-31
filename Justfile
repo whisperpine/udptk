@@ -13,3 +13,6 @@ send *OPT:
 # udptk listen
 listen *OPT:
     cargo run -p udptk -- {{LOG_LEVEL}} listen {{OPT}}
+
+publish:
+    cargo -Z package-workspace publish --workspace
