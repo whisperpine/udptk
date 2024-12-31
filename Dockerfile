@@ -17,9 +17,11 @@ COPY --link --from=xx / /
 # Install host build dependencies.
 RUN apk add --no-cache musl-dev clang
 
+# Copy all project files while respecting .dockerignore
+COPY --link . .
+
 # Fetch crates before building stage for better caching.
-RUN --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
-    --mount=type=cache,target=/usr/local/cargo/registry \
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git/db \
     cargo fetch
 
@@ -28,9 +30,6 @@ RUN --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
 # https://docs.docker.com/reference/dockerfile/#automatic-platform-args-in-the-global-scope
 ARG TARGETPLATFORM
 RUN mkdir -p /app/${TARGETPLATFORM}
-
-# Copy all project files while respecting .dockerignore
-COPY --link . .
 
 # Build the application.
 # Leverage a cache mount to /usr/local/cargo/registry for downloaded dependencies,
@@ -55,11 +54,6 @@ ARG APP_NAME
 WORKDIR /app
 
 ARG TARGETPLATFORM
-# Copy the executable from the "build" stage.
-COPY --link --from=build /app/${TARGETPLATFORM}/${APP_NAME} .
-
-# Create a symlink so that udptk can be found in $PATH.
-RUN ln -s /app/udptk /bin/udptk
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
@@ -71,8 +65,15 @@ RUN adduser \
     --shell "/sbin/nologin" \
     --no-create-home \
     --uid "${UID}" \
-    appuser
-USER appuser
+    app
+# Switch to the use just created.
+USER app
+
+# Copy the executable from the "build" stage.
+COPY --chown=app:app --from=build /app/${TARGETPLATFORM}/${APP_NAME} .
+
+# Create a symlink so that udptk can be found in $PATH.
+RUN ln -s /app/udptk /bin/udptk
 
 # What the container should run when it is started.
 ENTRYPOINT ["/app/udptk"]
