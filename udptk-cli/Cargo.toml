@@ -1,11 +1,11 @@
 [package]
 name = "udptk"
-edition.workspace = true
+version.workspace = true
+readme.workspace = true
 authors.workspace = true
 repository.workspace = true
-readme.workspace = true
-version.workspace = true
 license.workspace = true
+edition.workspace = true
 description = "A UDP toolkit for debugging purpose"
 
 [[bin]]
@@ -13,7 +13,7 @@ name = "udptk"
 path = "./src/main.rs"
 
 [dependencies]
-udptk-core = { path = "../core", version = "0.1.5" }
+udptk-core = { path = "../udptk-core", version = "0.1.5" }
 tracing-subscriber.workspace = true
 tracing.workspace = true
 anyhow.workspace = true
