@@ -60,6 +60,7 @@
             packages = with pkgs; [
               rustToolchain
               cargo-edit
+              cargo-msrv
               just
             ];
           };
