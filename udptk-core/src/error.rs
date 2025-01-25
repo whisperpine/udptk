@@ -1,4 +1,5 @@
-pub type Result<T> = core::result::Result<T, Error>;
+/// A handy type alias for `Result<T, udptk::Error>`.
+pub type Result<T> = std::result::Result<T, Error>;
 
 /// Enumeration of errors that can occur in this crate.
 #[derive(Debug, thiserror::Error)]

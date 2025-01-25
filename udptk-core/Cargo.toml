@@ -16,3 +16,6 @@ name = "udptk"
 tokio.workspace = true
 tracing.workspace = true
 thiserror.workspace = true
+
+[lints]
+workspace = true

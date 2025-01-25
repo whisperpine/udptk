@@ -38,6 +38,6 @@ fn get_ip_port(target: &str) -> crate::Result<(IpAddr, u16)> {
     let mut addrs_iter = target.to_socket_addrs()?;
     match addrs_iter.find(|addr| addr.is_ipv4()) {
         Some(addr) => Ok((addr.ip(), addr.port())),
-        None => Err(crate::Error::NoIpAddress(target.to_string())),
+        None => Err(crate::Error::NoIpAddress(target.to_owned())),
     }
 }

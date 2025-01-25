@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
 /// The main command line interface.
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
-pub struct Args {
+pub(crate) struct Args {
     /// Increase logging verbosity.
     ///
     /// This flag can be set multiple times to increase verbosity.
@@ -55,7 +55,7 @@ impl Args {
     /// * `trace`: if `-d` is used twice (e.g. `-dd`).
     ///
     /// If the debug flag is used more than twice, it will return an error.
-    pub fn get_log_level(&self) -> anyhow::Result<&'static str> {
+    pub(crate) fn get_log_level(&self) -> anyhow::Result<&'static str> {
         match self.debug {
             0 => Ok("info"),
             1 => Ok("debug"),
@@ -65,7 +65,7 @@ impl Args {
     }
 
     /// Run the subcommand specified in the command line arguments.
-    pub async fn run_sub_cmd(&self) -> anyhow::Result<()> {
+    pub(crate) async fn run_sub_cmd(&self) -> anyhow::Result<()> {
         match &self.subcommands {
             SubCommands::Send(a) => udptk::send(&a.target, &a.content).await?,
             SubCommands::Listen { port } => udptk::listen(*port).await?,
