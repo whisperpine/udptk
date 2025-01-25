@@ -61,6 +61,7 @@
               rustToolchain
               cargo-edit
               cargo-msrv
+              bacon
               just
             ];
           };
