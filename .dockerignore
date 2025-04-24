@@ -28,9 +28,9 @@
 **/values.dev.yaml
 /bin
 /target
-/Cargo.lock
-LICENSE
-README.md
-
-.direnv
+/.direnv
 .envrc
+LICENSE
+LICENSE-APACHE
+LICENSE-MIT
+README.md

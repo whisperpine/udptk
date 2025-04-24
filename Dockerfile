@@ -72,8 +72,5 @@ USER app
 # Copy the executable from the "build" stage.
 COPY --chown=app:app --from=build /app/${TARGETPLATFORM}/${APP_NAME} .
 
-# Create a symlink so that udptk can be found in $PATH.
-RUN ln -s /app/udptk /bin/udptk
-
 # What the container should run when it is started.
 ENTRYPOINT ["/app/udptk"]

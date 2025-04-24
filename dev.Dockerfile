@@ -20,8 +20,7 @@ COPY --link . .
 # and a cache mount to /app/target/ for compiled dependencies which will speed up subsequent builds.
 # Leverage a bind mount to the src directory to avoid having to copy the source code into the container.
 # Once built, copy the executable to an output directory before the cache mounted /app/target is unmounted.
-RUN --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
-    --mount=type=cache,target=/app/target/,id=rust-cache-${APP_NAME}-${TARGETPLATFORM} \
+RUN --mount=type=cache,target=/app/target/,id=rust-cache-${APP_NAME}-${TARGETPLATFORM} \
     --mount=type=cache,target=/usr/local/cargo/registry,id=crates-cache-${APP_NAME}-${TARGETPLATFORM} \
     --mount=type=cache,target=/usr/local/cargo/git/db,id=git-cache-${APP_NAME}-${TARGETPLATFORM} \
     cargo build --target-dir ./target && \
