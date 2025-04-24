@@ -51,7 +51,7 @@ fn init_tracing_subscriber(log_level: &str) {
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| log_level.into()),
+                .unwrap_or_else(|_| format!("udptk={log_level}").into()),
         )
         .with(tracing_subscriber::fmt::layer())
         .init();
