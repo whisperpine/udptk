@@ -59,10 +59,10 @@
           default = pkgs.mkShell {
             packages = with pkgs; [
               rustToolchain
-              cargo-edit
-              cargo-msrv
-              bacon
-              just
+              cargo-edit # managing cargo dependencies
+              cargo-msrv # find the minimum supported rust version
+              bacon # background code checker
+              just # just a command runner
             ];
           };
         }
