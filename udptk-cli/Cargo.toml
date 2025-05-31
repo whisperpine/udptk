@@ -14,7 +14,7 @@ name = "udptk"
 path = "./src/main.rs"
 
 [dependencies]
-udptk-core = { path = "../udptk-core", version = "0.4.1" }
+udptk-core = { path = "../udptk-core", version = "0.4.2-alpha.1" }
 tracing-subscriber.workspace = true
 tracing.workspace = true
 anyhow.workspace = true

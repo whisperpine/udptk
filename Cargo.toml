@@ -3,7 +3,7 @@ resolver = "3"
 members = ["udptk-cli", "udptk-core"]
 
 [workspace.package]
-version = "0.4.1"
+version = "0.4.2-alpha.1"
 readme = "README.md"
 authors = ["Yusong Lai <yusonglai64@gmail.com>"]
 repository = "https://github.com/whisperpine/udptk"
