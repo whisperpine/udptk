@@ -2,6 +2,10 @@ LOG_LEVEL := ""
 #LOG_LEVEL := "-d"
 #LOG_LEVEL := "-dd"
 
+# list all available subcommands
+_default:
+  @just --list
+
 # udptk help [SUBCMD]
 help *SUBCMD:
   cargo run -p udptk -- {{LOG_LEVEL}} help {{SUBCMD}}
