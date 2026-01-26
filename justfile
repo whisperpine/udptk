@@ -20,7 +20,7 @@ listen *OPT:
 
 # publish to crates.io (set OPT as `-n` to dry run)
 publish *OPT:
-  cargo -Z package-workspace publish --workspace {{OPT}}
+  cargo publish --workspace {{OPT}}
 
 # build the docker image for the local machine's platform
 build:
