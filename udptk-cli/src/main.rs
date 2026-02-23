@@ -16,14 +16,14 @@ mod cli;
 async fn main() -> anyhow::Result<()> {
     use clap::Parser;
 
-    // Parse command line arguments
+    // Parse command line arguments.
     let args = crate::cli::Args::parse();
 
-    // Initialize tracing subscriber with log level from args
+    // Initialize tracing subscriber with log level from args.
     let log_level = args.get_log_level()?;
     init_tracing_subscriber(log_level);
 
-    // Run subcommand with given args
+    // Run subcommand with given args.
     tracing::trace!("Running sub-command with args: {:?}", args);
     args.run_sub_cmd().await.unwrap_or_else(|error| {
         tracing::error!("{}", error);
@@ -32,16 +32,13 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Initialize tracing subscriber with default environment variable fallback
-/// for log level.
+/// Initialize tracing subscriber with default environment variable fallback for log level.
 ///
-/// The log level can be specified via the `RUST_LOG` environment variable.\
-/// If the environment variable is not set, it falls back to the
-/// given `log_level` parameter.
+/// The log level can be specified via the `RUST_LOG` environment variable. If the environment
+/// variable is not set, it falls back to the given `log_level` parameter.
 ///
-/// This function is called in the `main` function of the binary to
-/// initialize the logging infrastructure before the application logic
-/// starts.
+/// This function is called in the `main` function of the binary to initialize the logging
+/// infrastructure before the application logic starts.
 fn init_tracing_subscriber(log_level: &str) {
     use tracing_subscriber::layer::SubscriberExt;
     use tracing_subscriber::util::SubscriberInitExt;

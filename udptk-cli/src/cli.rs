@@ -36,13 +36,9 @@ struct SendArgs {
     content: String,
     /// The address to send UDP packets to.
     ///
-    /// Example: "localhost:6777"
+    /// Format: [domain:port] or [ip:port].
     #[arg(short, long)]
-    #[arg(
-        default_value_t = format!("localhost:6777"),
-        help = "The address to send UDP packets to.\n\
-                Format: [domain:port] or [ip:port]."
-    )]
+    #[arg(default_value_t = format!("localhost:6777"))]
     target: String,
 }
 
